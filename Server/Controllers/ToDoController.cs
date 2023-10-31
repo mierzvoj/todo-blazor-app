@@ -22,7 +22,7 @@ namespace Server.Controllers
         }
         public async Task<ActionResult<List<Todo>>> GetAllTodos()
         {
-            var list = await _context.ToDos.ToListAsync();
+            var list = await _context.ToDos.OrderBy(g => g.Date).ToListAsync();
 
         return Ok(list);
         }

@@ -1,29 +1,47 @@
 @page "/todos"
 @inject HttpClient Http
 @using global::Shared
-@using System.Net
+@page "/quickgrid-example"
+@inject NavigationManager NavigationManager
 
+<button @onclick="AddToDo" class="btn btn-primary">Add a ToDo</button>
 
-<h3>To Dos</h3>
-@if (toDos.Count <= 0)
+<h3>List of My To Dos</h3>
+@if (toDos is null)
 {
     <span>Loading To Dos...</span>
-}
+} 
+
 else {
+<header>
+  <div id="header-wrapper">
+    <nav>
+      <strong><a style="margin: 50px 90px">Task Name</a>
+      <a style="margin-right: 60px">Task Description</a>
+      <a>Task Due Date</a>
+      </strong>
+    </nav>
+  </div>
+</header>
     <ul>
         @foreach (var toDo in toDos)
         {
-            <li>@toDo.Name - @toDo.Description</li>
+            <li>@toDo.Name - @toDo.Description - @toDo.Date</li>
         }
     </ul>
     }
 @code{
-List<Todo> toDos = new List<Todo>();
+    
+public List<Todo>? toDos;
     protected override async Task OnInitializedAsync()
     {
         var result = await Http.GetFromJsonAsync<List<Todo>>("api/todo");
         if (result != null)
             toDos = result;
+    }
+        public void AddToDo()
+        {
+            NavigationManager.NavigateTo("/todo");
     }
 
 }
