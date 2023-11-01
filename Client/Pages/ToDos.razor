@@ -1,10 +1,12 @@
 @page "/todos"
 @inject HttpClient Http
 @using global::Shared
-@page "/quickgrid-example"
+@using Microsoft.AspNetCore.Components.QuickGrid
 @inject NavigationManager NavigationManager
 
+
 <button @onclick="AddToDo" class="btn btn-primary">Add a ToDo</button>
+<br/>
 
 <h3>List of My To Dos</h3>
 @if (toDos is null)
@@ -12,23 +14,16 @@
     <span>Loading To Dos...</span>
 } 
 
-else {
-<header>
-  <div id="header-wrapper">
-    <nav>
-      <strong><a style="margin: 50px 90px">Task Name</a>
-      <a style="margin-right: 60px">Task Description</a>
-      <a>Task Due Date</a>
-      </strong>
-    </nav>
-  </div>
-</header>
-    <ul>
-        @foreach (var toDo in toDos)
-        {
-            <li>@toDo.Name - @toDo.Description - @toDo.Date</li>
-        }
-    </ul>
+else 
+{
+    <QuickGrid Items="toDos.AsQueryable()">
+           <PropertyColumn Property="g => g.Name"/>
+            <PropertyColumn Property="g => g.Description"/>
+            <PropertyColumn Property="g => g.Date"/>
+        <TemplateColumn>
+            <button @onclick="(() => EditToDo(context.Id))" class="btn btn-primary">Edit a ToDo</button>
+        </TemplateColumn>
+    </QuickGrid>
     }
 @code{
     
@@ -42,6 +37,10 @@ public List<Todo>? toDos;
         public void AddToDo()
         {
             NavigationManager.NavigateTo("/todo");
+    }
+    public void EditToDo(int id)
+    {
+        NavigationManager.NavigateTo("/todo/{id}");
     }
 
 }
