@@ -34,13 +34,13 @@ public List<Todo>? toDos;
         if (result != null)
             toDos = result;
     }
-        public void AddToDo()
-        {
+    void AddToDo()
+    {
             NavigationManager.NavigateTo("/todo");
     }
-    public void EditToDo(int id)
+    void EditToDo(int id)
     {
-        NavigationManager.NavigateTo("/todo/{id}");
+        NavigationManager.NavigateTo($"/todo/{id}");
     }
 
 }

@@ -1,7 +1,8 @@
-@page "/todo"
 @page "/todo/{id:int}"
+@page "/todo"
 @inject NavigationManager NavigationManager
 @using global::Shared
+@inject HttpClient Http
 
 @if(Id is null)
 {
@@ -28,16 +29,44 @@ else
         <InputDate Type="InputDateType.Date" class="form-eliment jds-d-inline-block jds-max-width150" id="date" @bind-Value="todo.Date" />
     </div><br/>
     <button type="submit" class="btn btn-primary">Save</button>
+    @if(Id is not null)
+    {
+        <button type="button" class="btn btn-danger" @onclick="DeleteToDo">Delete</button>
+    }
 </EditForm>
 
 @code{
     [Parameter]
     public int? Id{get; set;}
-    Todo todo = new Todo{Name = "New Title"};
+    Todo todo = new Todo{Name = "New ToDo"};
+        protected override async Task OnParametersSetAsync()
+        {
+            if(Id is not null)
+            {
+                var result = await Http.GetFromJsonAsync<Todo>($"api/todo/{Id}");
+                    if(result is not null){
+                        todo = result;
+                    }
+            }
+        }
+        async Task DeleteToDo()
+        {
+            await Http.DeleteAsync($"api/todo/{Id}");
+            NavigationManager.NavigateTo("/todos");
 
-    async Task HandleSubmit()
-    {
-        Console.WriteLine("handle submit");
+
+        }
+
+        async Task HandleSubmit()
+        {
+        if(Id is null)
+        {
+              await Http.PostAsJsonAsync("api/todo", todo);  
+        }
+        else
+        {
+            await Http.PutAsJsonAsync($"api/todo/{Id}", todo);
+        }
     }
 
 }
